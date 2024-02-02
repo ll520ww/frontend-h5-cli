@@ -32,13 +32,14 @@ axios.interceptors.request.use(
  */
 axios.interceptors.response.use(
   (response) => {
-    if (response.data.errCode === 2) {
+    if (response?.data.errCode === 2) {
       console.log("过期");
     }
     return response;
   },
   (error) => {
-    console.log("请求出错：", error);
+    // console.log("请求出错：", error);
+    msg(error);
   }
 );
 
@@ -58,7 +59,7 @@ export function get(url: any, params = {}) {
         resolve(response?.data);
       })
       .catch((error) => {
-        msag(error);
+        msg(error);
         reject(error);
       });
   });
@@ -98,7 +99,7 @@ export function patch(url: any, data = {}) {
         resolve(response.data);
       },
       (err) => {
-        msag(err);
+        msg(err);
         reject(err);
       }
     );
@@ -119,48 +120,15 @@ export function put(url: any, data = {}) {
         resolve(response.data);
       },
       (err) => {
-        msag(err);
+        msg(err);
         reject(err);
       }
     );
   });
 }
 
-//统一接口处理，返回数据
-export default function (fecth: any, url: any, param: any) {
-  let _data = "";
-  return new Promise((resolve, reject) => {
-    switch (fecth) {
-      case "get":
-        console.log("begin a get request,and url:", url);
-        get(url, param)
-          .then(function (response) {
-            resolve(response);
-          })
-          .catch(function (error) {
-            console.log("get request GET failed.", error);
-            reject(error);
-          });
-        break;
-      case "post":
-        post(url, param)
-          .then(function (response) {
-            resolve(response);
-          })
-          .catch(function (error) {
-            console.log("get request POST failed.", error);
-            reject(error);
-          });
-        break;
-      default:
-        break;
-    }
-  });
-}
-
 //失败提示
-function msag(err: any) {
-  console.log(err, "err");
+function msg(err: any) {
   if (err && err.response) {
     switch (err.response.status) {
       case 400:
